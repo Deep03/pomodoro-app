@@ -21,6 +21,7 @@ List<String> _options = ['Pomodoro $pomodoro mins', 'Short Break $short_break mi
 int _selectedIndex = 0;
 
 
+
 void main() {
   runApp(PomodoroApp());
 }
@@ -93,7 +94,6 @@ class _TimeScreenState extends State<TimeScreen> {
   }
 
   void _resetTimer() {
-    print("Resetting timer");
     setState(() {
       isPaused = true;
       totalSeconds = _parseTimeString(times[_selectedIndex]);
