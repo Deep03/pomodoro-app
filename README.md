@@ -1,6 +1,6 @@
 # pomodoroapp
 
-a simple pomodoro technique clock app
+A simple pomodoro timer app, minimalist design
 
 ## Getting Started
 
