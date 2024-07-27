@@ -20,13 +20,16 @@ List<String> times = [pomodoro_time, short_break_time, long_break_time];
 List<String> _options = ['Pomodoro $pomodoro mins', 'Short Break $short_break mins', 'Long Break $long_break mins'];
 int _selectedIndex = 0;
 
+
 void main() {
   runApp(PomodoroApp());
 }
-
+final GlobalKey<_TimeScreenState> _timeScreenKey = GlobalKey<_TimeScreenState>();
 
 class PomodoroApp extends StatelessWidget {
   PomodoroApp({super.key});
+  // final GlobalKey<_TimeScreenState> _timeScreenKey = GlobalKey<_TimeScreenState>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +48,13 @@ class PomodoroApp extends StatelessWidget {
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: const [
+          children: [
             SizedBox(height: 50),
-            TimeScreen(),
+            TimeScreen(key: _timeScreenKey),
             SizedBox(height: 150),
             TimerOptionsStack(),
+            SizedBox(height: 100),
+            cancelTimer(onPressed: () {_timeScreenKey.currentState?._resetTimer();})
           ],
         ),
       ),
@@ -57,8 +62,9 @@ class PomodoroApp extends StatelessWidget {
   }
 }
 
+
 class TimeScreen extends StatefulWidget {
-  const TimeScreen({super.key});
+  const TimeScreen({super.key});  // Ensure the constructor can accept the key
   @override
   // ignore: no_logic_in_create_state, library_private_types_in_public_api
   _TimeScreenState createState() => _TimeScreenState(current_selected_time: pomodoro_time);
@@ -87,6 +93,7 @@ class _TimeScreenState extends State<TimeScreen> {
   }
 
   void _resetTimer() {
+    print("Resetting timer");
     setState(() {
       isPaused = true;
       totalSeconds = _parseTimeString(times[_selectedIndex]);
@@ -104,11 +111,6 @@ class _TimeScreenState extends State<TimeScreen> {
         _timer.cancel();
       }
     });
-  }
-
-  void _cancelTimer() {
-    _timer.cancel();
-    _resetTimer();
   }
 
   String _formatTime(int seconds) {
@@ -140,7 +142,6 @@ class _TimeScreenState extends State<TimeScreen> {
             isPaused: isPaused,
             onPressed: _togglePause,
           ),
-          cancelTimer(onPressed: _cancelTimer),
         ],
       ),
     );
@@ -176,10 +177,10 @@ class cancelTimer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton(onPressed: onPressed, icon: Icon(Icons.cancel)),
+        IconButton(onPressed: onPressed, icon: Icon(Icons.refresh), iconSize: 40,),
       ],
     );
   }
@@ -217,7 +218,9 @@ class TimerOptionsStack extends StatefulWidget {
   @override
   _TimerOptionsStackState createState() => _TimerOptionsStackState();
 }
+
 class _TimerOptionsStackState extends State<TimerOptionsStack> {
+  
   // int _selectedIndex = 0;
 
   // List<String> _options = ['Pomodoro $pomodoro mins', 'Short Break $short_break mins', 'Long Break $long_break mins'];
@@ -225,6 +228,7 @@ class _TimerOptionsStackState extends State<TimerOptionsStack> {
   void _cycleOptions() {
     setState(() {
       _selectedIndex = (_selectedIndex + 1) % _options.length;
+      _timeScreenKey.currentState?._resetTimer();
     });
   }
 
@@ -266,3 +270,4 @@ class _TimerOptionsStackState extends State<TimerOptionsStack> {
     );
   }
 }
+
